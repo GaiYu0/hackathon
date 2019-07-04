@@ -9,6 +9,7 @@ parser.add_argument('--rc', type=str, nargs='+')
 
 args = parser.parse_args()
 
+ss = SparkSession.builder.getOrCreate()
 cmnt_df = None
 for f in args.rc:
     df = ss.read.json(f).select()
