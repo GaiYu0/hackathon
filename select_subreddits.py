@@ -4,8 +4,6 @@ from pyspark.sql.functions import regexp_replace
 from pyspark.sql.session import SparkSession
 from pyspark.sql.types import IntegerType
 
-import utils
-
 parser = argparse.ArgumentParser()
 parser.add_argument('--rc', type=str, nargs='+')
 
