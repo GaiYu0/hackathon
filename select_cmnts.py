@@ -12,6 +12,6 @@ ss = SparkSession.builder.getOrCreate()
 post_df = ss.read.orc('RS.orc')
 cmnt_df = None
 for f in args.rc:
-    df = ss.read.json(f).select('author', 'created_utc', 'link_id').withColumnRenamed('id')
+    df = ss.read.json(f).select('author', 'created_utc', 'link_id').withColumnRenamed('link_id', 'id')
     cmnt_df = df if cmnt_df is None else cmnt_df.union(df)
 cmnt_df.join(post_df.select('id'), 'id').write.json('RC.json', mode='overwrite')
