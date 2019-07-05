@@ -1,4 +1,6 @@
 import argparse
+import pickle
+
 import pandas as pd
 from pyspark.sql.session import SparkSession
 
