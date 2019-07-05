@@ -14,4 +14,6 @@ for f in args.rs:
     df = ss.read.json(f).select('id', 'subreddit', 'subreddit_id', 'title')
     post_df = df if post_df is None else post_df.union(df)
 subreddit_ids = pickle.load(open('subreddit_ids', 'rb'))
-post_df.filter(post_df.subreddit_id.isin(*subreddit_ids)).coalesce(1).write.json('RS', mode='overwrite')
+ret = post_df.filter(post_df.subreddit_id.isin(*subreddit_ids)).coalesce(1)
+ret.write.orc('RS.orc', mode='overwrite')
+ret.write.json('RS.json', mode='overwrite')
