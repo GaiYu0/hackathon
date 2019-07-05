@@ -5,7 +5,7 @@ import pandas as pd
 from pyspark.sql.session import SparkSession
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--rs', type=str, nargs='+')
+parser.add_argument('--rc', type=str, nargs='+')
 args = parser.parse_args()
 
 ss = SparkSession.builder.getOrCreate()
