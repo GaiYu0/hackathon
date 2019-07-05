@@ -9,7 +9,7 @@ args = parser.parse_args()
 ss = SparkSession.builder.getOrCreate()
 post_df = None
 for f in args.rs:
-    df = ss.read.json(f)
+    df = ss.read.json(f).select('author', 'id', 'subreddit', 'subreddit_id', 'title')
     post_df = df if post_df is None else post_df.union(df)
-subreddits = pickle.load(open('subreddits', 'rb'))
-post_df.isin(*subreddits).to_json('RS')
+subreddit_ids = pickle.load(open('subreddit_ids', 'rb'))
+post_df.filter(post_df.subreddit_id.isin(*subreddit_ids)).to_json('RS')
