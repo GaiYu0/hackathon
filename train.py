@@ -19,8 +19,8 @@ def main(args):
     # load and preprocess dataset
 #   data = load_data(args)
 
-    src = np.load('src.npy')
-    dst = np.load('dst.npy')
+    u = np.load('u.npy')
+    v = np.load('v.npy')
     x = np.load('x.npy')
     y = np.load('y.npy')
 
@@ -33,9 +33,9 @@ def main(args):
     adj, _ = sbm.generate(_n * k, [_n] * k, np.eye(k) * 0.001)
     '''
 
-    dat = np.ones_like(src)
+    dat = np.ones_like(u)
     n = len(x)
-    adj = sps.coo_matrix((dat, (src, dst)), shape=[n, n]).maximum(sps.eye(n))
+    adj = sps.coo_matrix((dat, (u, v)), shape=[n, n]).maximum(sps.eye(n))
 #   adj = sps.eye(n, n)
 
     data = type('', (), {})
@@ -88,12 +88,6 @@ def main(args):
 
     # create GCN model
     g = DGLGraph(data.graph, readonly=True)
-    '''
-    g = DGLGraph()
-    g.add_nodes(n)
-    g.add_edges(src, dst)
-    g.readonly()
-    '''
     g.ndata['features'] = features
     g.ndata['labels'] = labels
 
