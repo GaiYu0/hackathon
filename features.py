@@ -20,6 +20,7 @@ def tokenize(x):
         return [[x.nid, 0], tuple()]
 
 ss = SparkSession.builder.getOrCreate()
+sc = ss.sparkContext
 post_df = ss.read.json('top50-posts.txt').select('id', 'title', 'subreddit_id')
 ids = post_df.select('id').collect()
 nids = range(len(ids))
