@@ -25,8 +25,8 @@ def main(args):
 
     dat = np.ones_like(u)
     n = len(x)
-#   adj = sps.coo_matrix((dat, (u, v)), shape=[n, n]).maximum(sps.eye(n))
-    adj = sps.eye(n, n)
+    adj = sps.coo_matrix((dat, (u, v)), shape=[n, n]).maximum(sps.eye(n))
+#   adj = sps.eye(n, n)
 
     data = type('', (), {})
     data.graph = dgl.graph_index.create_graph_index(adj, readonly=True, multigraph=False)
