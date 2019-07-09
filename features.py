@@ -47,15 +47,18 @@ y = np.array(y_rdd.map(lambda d: d['subreddit_id']).collect())[argsort_y]
 unique_y, inverse_y = np.unique(y, return_inverse=True)
 y = np.arange(len(unique_y))[inverse_y]
 
-pickle.dump(nids.select('id').flatMap(lambda x: x).collect(), open('ids.pickle', 'wb'))
+pickle.dump(nids.select('id').flatMap(lambda x: x).collect(), open('nids.pickle', 'wb'))
 np.save('x', x)
 np.save('y', y)
 '''
 
 cmnt_df = ss.read.json('top50-comments.txt').select('author', 'link_id')
 cmnt_df = cmnt_df.withColumn('id', regexp_replace('link_id', 't3_', '')).join(nids, 'id')
-edges = cmnt_df.alias('u').join(cmnt_df.alias('v'), 'author').sample(fraction=0.1)
+edges = cmnt_df.alias('u').join(cmnt_df.alias('v'), 'author').persist()
 u = np.array(edges.select('u.nid').rdd.flatMap(lambda x: x).collect())
 v = np.array(edges.select('v.nid').rdd.flatMap(lambda x: x).collect())
+idx = np.random.choice(len(u), int(0.1 * len(u)), replace=False)
+u = u[idx]
+v = v[idx]
 np.save('u', u)
 np.save('v', v)
