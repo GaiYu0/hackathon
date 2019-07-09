@@ -26,11 +26,12 @@ ss = SparkSession.builder.getOrCreate()
 sc = ss.sparkContext
 post_df = ss.read.json('top50-posts.txt').select('id', 'title', 'subreddit_id')
 ids = post_df.select('id').rdd.flatMap(lambda x: x).collect()
-nids = range(len(ids))
-post_df = post_df.join(sc.parallelize(zip(ids, nids)).toDF(['id', 'nid']), 'id')
+nids = sc.parallelize(zip(ids, range(ids))).toDF(['id', 'nid'])
+post_df = post_df.join(nid_df, 'id')
 
+'''
 embeddings = nd.array(np.load('embeddings.npy'))
-x_rdd = post_df.select('nid', 'title').rdd.map(tokenize)
+x_rdd = post_df.select('nid', 'title').rdd.map(tokenize).cache()
 indptr  = nd.array(np.cumsum([0] + x_rdd.map(fst).map(snd).collect()))
 indices = nd.array(x_rdd.map(snd).flatMap(lambda x: x).map(fst).collect())
 data = nd.array(x_rdd.map(snd).flatMap(lambda x: x).map(snd).collect())
@@ -45,6 +46,15 @@ y = np.array(y_rdd.map(lambda d: d['subreddit_id']).collect())[argsort_y]
 unique_y, inverse_y = np.unique(y, return_inverse=True)
 y = np.arange(len(unique_y))[inverse_y]
 
-pickle.dump(ids, open('nids.pickle', 'wb'))
+pickle.dump(nids.select('id').flatMap(lambda x: x).collect(), open('ids.pickle', 'wb'))
 np.save('x', x)
 np.save('y', y)
+'''
+
+cmnt_df = ss.read.json('top50-comments.txt').select('author', 'link_id')
+cmnt_df = cmnt_df.withColumnRenamed('link_id', 'id').join(nids, 'id')
+edges = cmnt_df.alias('u').join(cmnt_df.alias('v'), 'author')
+u = np.array(edges.select('u.nid').flatMap(lambda x: x).collect())
+v = np.array(edges.select('v.nid').flatMap(lambda x: x).collect())
+np.save('u', u)
+np.save('v', v)
