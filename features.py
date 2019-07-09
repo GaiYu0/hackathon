@@ -4,6 +4,7 @@ import pickle
 from gluonnlp.data import SpacyTokenizer
 import mxnet.ndarray as nd
 import numpy as np
+from pyspark.sql.functions import regexp_replace
 from pyspark.sql.session import SparkSession
 
 fst = lambda x: x[0]
@@ -52,7 +53,7 @@ np.save('y', y)
 '''
 
 cmnt_df = ss.read.json('top50-comments.txt').select('author', 'link_id')
-cmnt_df = cmnt_df.withColumnRenamed('link_id', 'id').join(nids, 'id')
+cmnt_df = cmnt_df.withColumn('id', regexp_replace('link_id', 't3_', '')).join(nids, 'id')
 edges = cmnt_df.alias('u').join(cmnt_df.alias('v'), 'author')
 u = np.array(edges.select('u.nid').rdd.flatMap(lambda x: x).collect())
 v = np.array(edges.select('v.nid').rdd.flatMap(lambda x: x).collect())
