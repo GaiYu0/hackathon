@@ -54,7 +54,7 @@ np.save('y', y)
 
 cmnt_df = ss.read.json('top50-comments.txt').select('author', 'link_id')
 cmnt_df = cmnt_df.withColumn('id', regexp_replace('link_id', 't3_', '')).join(nids, 'id')
-edges = cmnt_df.alias('u').join(cmnt_df.alias('v'), 'author')
+edges = cmnt_df.alias('u').join(cmnt_df.alias('v'), 'author').sample(fraction=0.1)
 u = np.array(edges.select('u.nid').rdd.flatMap(lambda x: x).collect())
 v = np.array(edges.select('v.nid').rdd.flatMap(lambda x: x).collect())
 np.save('u', u)
