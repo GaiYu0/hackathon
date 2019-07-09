@@ -22,7 +22,7 @@ def tokenize(x):
 ss = SparkSession.builder.getOrCreate()
 sc = ss.sparkContext
 post_df = ss.read.json('top50-posts.txt').select('id', 'title', 'subreddit_id')
-ids = post_df.select('id').collect()
+ids = post_df.select('id').rdd.flatMap(lambda x: x).collect()
 nids = range(len(ids))
 post_df = post_df.join(sc.parallelize(zip(ids, nids)).toDF(['id', 'nid']), 'id')
 
