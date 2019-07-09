@@ -41,5 +41,6 @@ y = np.array(y_rdd.map(lambda d: d['subreddit_id']).collect())[argsort_y]
 unique_y, inverse_y = np.unique(y, return_inverse=True)
 y = np.arange(len(unique_y))[inverse_y]
 
+pickle.dump(ids, open('nids.pickle', 'wb'))
 np.save('x', x)
 np.save('y', y)
