@@ -6,6 +6,9 @@ import mxnet.ndarray as nd
 import numpy as np
 from pyspark.sql.session import SparkSession
 
+fst = lambda x: x[0]
+snd = lambda x: x[1]
+
 tok2idx = pickle.load(open('tok2idx', 'rb'))
 tokenizer = SpacyTokenizer()
 def tokenize(x):
