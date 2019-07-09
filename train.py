@@ -13,7 +13,6 @@ from graphsage_cv import graphsage_cv_train
 
 import numpy.random as npr
 import scipy.sparse as sps
-import sbm
 
 def main(args):
     # load and preprocess dataset
@@ -23,15 +22,6 @@ def main(args):
     v = np.load('v.npy')
     x = np.load('x.npy')
     y = np.load('y.npy')
-
-    '''
-    _n = 15000
-    unique_y = np.unique(y)
-    x = np.vstack([x[np.nonzero(y == i)[0][:_n]] for i in unique_y])
-    y = np.repeat(unique_y, _n)
-    k = len(unique_y)
-    adj, _ = sbm.generate(_n * k, [_n] * k, np.eye(k) * 0.001)
-    '''
 
     dat = np.ones_like(u)
     n = len(x)
