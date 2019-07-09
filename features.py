@@ -26,7 +26,7 @@ ss = SparkSession.builder.getOrCreate()
 sc = ss.sparkContext
 post_df = ss.read.json('top50-posts.txt').select('id', 'title', 'subreddit_id')
 ids = post_df.select('id').rdd.flatMap(lambda x: x).collect()
-nids = sc.parallelize(zip(ids, range(ids))).toDF(['id', 'nid'])
+nids = sc.parallelize(zip(ids, range(len(ids)))).toDF(['id', 'nid'])
 post_df = post_df.join(nid_df, 'id')
 
 '''
